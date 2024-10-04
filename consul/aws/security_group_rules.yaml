@@ -1,7 +1,12 @@
  dns:
    from_port: 8600
    to_port: 8600
-   protocol: -1
+   protocol: TCP
+   type: ingress
+ dns:
+   from_port: 8600
+   to_port: 8600
+   protocol: UDP
    type: ingress
  http:
    from_port: 8500
@@ -31,10 +36,20 @@
  lan-serf:
    from_port: 8301
    to_port: 8301
-   protocol: -1
+   protocol: TCP
+   type: ingress
+ lan-serf:
+   from_port: 8301
+   to_port: 8301
+   protocol: UDP
    type: ingress
  wan-serf:
    from_port: 8302
    to_port: 8302
-   protocol: -1
+   protocol: TCP
+   type: ingress
+ wan-serf:
+   from_port: 8302
+   to_port: 8302
+   protocol: UDP
    type: ingress
