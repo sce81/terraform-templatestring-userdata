@@ -1,0 +1,40 @@
+ dns:
+   from_port: 8600
+   to_port: 8600
+   protocol: -1
+   type: ingress
+ http:
+   from_port: 8500
+   to_port: 8500
+   protocol: TCP
+   type: ingress
+ https:
+   from_port: 8501
+   to_port: 8501
+   protocol: TCP
+   type: ingress
+ gRPC:
+   from_port: 8502
+   to_port: 8502
+   protocol: TCP
+   type: ingress
+ gRPC-TLS:
+   from_port: 8503
+   to_port: 8503
+   protocol: TCP
+   type: ingress
+ rpc:
+   from_port: 8300
+   to_port: 8300
+   protocol: TCP
+   type: ingress
+ lan-serf:
+   from_port: 8301
+   to_port: 8301
+   protocol: -1
+   type: ingress
+ wan-serf:
+   from_port: 8302
+   to_port: 8302
+   protocol: -1
+   type: ingress
