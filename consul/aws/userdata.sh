@@ -1,22 +1,33 @@
 #!/bin/bash
 PATH=$PATH:/usr/local/bin
 
+CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
+CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq '.Parameter.Value')
+CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip --with-decryption | jq '.Parameter.Value')
+
+
+echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/bundle.crt
+echo $CONSUL_CERTS | jq -r '.cert_bundle.ca' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/ca.crt.pem
+echo $CONSUL_CERTS | jq -r '.cert_bundle.private' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/${NAME}.key.pem
+echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/${NAME}.crt.pem
+echo $CONSUL_LICENSE |  jq -r '.Parameter.Value' > /opt/${NAME}/config/license.hclic
+
 # Remove ACL configuration
 rm -f /opt/$NAME/config/acl.json
 rm -f /opt/$NAME/config/tls.json
 
 
 #Pull from Secrets Manager
-SECRETS=$(aws secretsmanager get-secret-value --secret-id ${SECRETID} --region=$REGION | jq '.SecretString | fromjson')
+#aws ssm get-parameter --name consul-license --with-decryption | jq -r '.Parameter.Value' > /opt/${NAME}/config/license.hclic
 
 
 # Import Consul Certificates
-echo $SECRETS | jq -r '.cert_bundle.private_key' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.key.pem
-echo $SECRETS | jq -r '.cert_bundle.certificate_body' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.crt.pem
-echo $SECRETS | jq -r '.cert_bundle.certificate_chain' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/ca.crt.pem
+#echo $SECRETS | jq -r '.cert_bundle.private_key' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.key.pem
+#echo $SECRETS | jq -r '.cert_bundle.certificate_body' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.crt.pem
+#echo $SECRETS | jq -r '.cert_bundle.certificate_chain' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/ca.crt.pem
 
 # Import Gossip Encryption Key
-GOSSIP_ENCRYPTION_KEY=$(echo $SECRETS | jq -r '.gossip_encryption_key')
+GOSSIP_ENCRYPTION_KEY=$(echo $CONSUL_GOSSIP | jq -r '.gossip_encryption_key')
 
 # Import Trust
 sudo /tmp/update-certificate-store --cert-file-path /opt/consul/config/tls/ca.crt.pem 
