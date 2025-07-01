@@ -3,7 +3,7 @@ PATH=$PATH:/usr/local/bin
 
 CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq '.Parameter.Value')
-CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip --with-decryption | jq '.Parameter.Value')
+CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq '.Parameter.Value')
 
 
 echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/bundle.crt
