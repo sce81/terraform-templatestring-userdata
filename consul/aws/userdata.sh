@@ -17,14 +17,13 @@ rm -f /opt/$NAME/config/acl.json
 rm -f /opt/$NAME/config/tls.json
 
 
-#Pull from Secrets Manager
-#aws ssm get-parameter --name consul-license --with-decryption | jq -r '.Parameter.Value' > /opt/consul/config/license.hclic
+#Set Up Certscript 
+sed -e "s/ROLE/${ROLE}/g" /opt/vault/certscript.sh
+sed -e "s/NAME/${NAME}/g" /opt/vault/certscript.sh
 
+#Set up Vault Agent
+sed -e "s/VAULT_ADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
 
-# Import Consul Certificates
-#echo $SECRETS | jq -r '.cert_bundle.private_key' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.key.pem
-#echo $SECRETS | jq -r '.cert_bundle.certificate_body' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/$NAME.crt.pem
-#echo $SECRETS | jq -r '.cert_bundle.certificate_chain' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/ca.crt.pem
 
 # Import Gossip Encryption Key
 GOSSIP_ENCRYPTION_KEY=$CONSUL_GOSSIP
@@ -33,9 +32,9 @@ GOSSIP_ENCRYPTION_KEY=$CONSUL_GOSSIP
 sudo /tmp/update-certificate-store --cert-file-path /opt/consul/config/tls/ca.crt.pem 
 
 # Import License
-echo LICENSE | jq -r '.license' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/license.hclic
-echo "license_path = \"/opt/$NAME/config/license.hclic\"" >> /opt/$NAME/config/default.hcl
+echo LICENSE | jq -r '.license' | sed -e 's/\\n/\n/g' > /opt/consul/config/license.hclic
+echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
 
 # Startup
 
-/opt/$NAME/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/$NAME/config/tls/ca.crt.pem" --cert-file-path "/opt/$NAME/config/tls/$NAME.crt.pem" --key-file-path "/opt/$NAME/config/tls/$NAME.key.pem"
+/opt/$NAME/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/$NAME/tls/ca.crt.pem" --cert-file-path "/opt/$NAME/tls/$NAME.crt.pem" --key-file-path "/opt/$NAME/tls/$NAME.key.pem"
