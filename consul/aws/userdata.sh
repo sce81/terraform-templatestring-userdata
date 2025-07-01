@@ -2,15 +2,15 @@
 PATH=$PATH:/usr/local/bin
 
 CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
-CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq '.Parameter.Value')
-CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq '.Parameter.Value')
+CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
+CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
 
 echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/consul/tls/bundle.crt
 echo $CONSUL_CERTS | jq -r '.cert_bundle.ca' | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.crt.pem
 echo $CONSUL_CERTS | jq -r '.cert_bundle.private' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.key.pem
 echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.crt.pem
-echo $CONSUL_LICENSE |  jq -r '.Parameter.Value' > /opt/consul/config/license.hclic
+echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 
 # Remove ACL configuration
 rm -f /opt/$NAME/config/acl.json
@@ -27,7 +27,7 @@ rm -f /opt/$NAME/config/tls.json
 #echo $SECRETS | jq -r '.cert_bundle.certificate_chain' | sed -e 's/\\n/\n/g' > /opt/$NAME/config/tls/ca.crt.pem
 
 # Import Gossip Encryption Key
-GOSSIP_ENCRYPTION_KEY=$(echo $CONSUL_GOSSIP | jq -r '.gossip_encryption_key')
+GOSSIP_ENCRYPTION_KEY=$CONSUL_GOSSIP
 
 # Import Trust
 sudo /tmp/update-certificate-store --cert-file-path /opt/consul/config/tls/ca.crt.pem 
