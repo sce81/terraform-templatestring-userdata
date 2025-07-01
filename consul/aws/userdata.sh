@@ -6,11 +6,11 @@ CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --wi
 CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq '.Parameter.Value')
 
 
-echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/bundle.crt
-echo $CONSUL_CERTS | jq -r '.cert_bundle.ca' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/ca.crt.pem
-echo $CONSUL_CERTS | jq -r '.cert_bundle.private' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/${NAME}.key.pem
-echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/${NAME}/tls/${NAME}.crt.pem
-echo $CONSUL_LICENSE |  jq -r '.Parameter.Value' > /opt/${NAME}/config/license.hclic
+echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/consul/tls/bundle.crt
+echo $CONSUL_CERTS | jq -r '.cert_bundle.ca' | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.crt.pem
+echo $CONSUL_CERTS | jq -r '.cert_bundle.private' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.key.pem
+echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.crt.pem
+echo $CONSUL_LICENSE |  jq -r '.Parameter.Value' > /opt/consul/config/license.hclic
 
 # Remove ACL configuration
 rm -f /opt/$NAME/config/acl.json
@@ -18,7 +18,7 @@ rm -f /opt/$NAME/config/tls.json
 
 
 #Pull from Secrets Manager
-#aws ssm get-parameter --name consul-license --with-decryption | jq -r '.Parameter.Value' > /opt/${NAME}/config/license.hclic
+#aws ssm get-parameter --name consul-license --with-decryption | jq -r '.Parameter.Value' > /opt/consul/config/license.hclic
 
 
 # Import Consul Certificates
