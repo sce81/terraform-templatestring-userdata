@@ -5,7 +5,7 @@ ROLE=${ROLE}
 
 CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
-CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
+GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 
@@ -26,8 +26,6 @@ sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 # execute certscript
 /opt/consul/tls/certscript.sh
 
-# Import Gossip Encryption Key
-GOSSIP_ENCRYPTION_KEY=$CONSUL_GOSSIP
 
 # Import Trust
 sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/certificate.json
@@ -37,4 +35,4 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
-/opt/consul/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.crt.pem" --cert-file-path "/opt/consul/tls/${NAME}.crt.pem" --key-file-path "/opt/consul/tls/${NAME}.key.pem"
+/opt/consul/bin/run-consul --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.internal.key"
