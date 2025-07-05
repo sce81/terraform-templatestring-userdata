@@ -1,5 +1,7 @@
 #!/bin/bash
 PATH=$PATH:/usr/local/bin
+NAME=${NAME}
+ROLE=${ROLE}
 
 CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
