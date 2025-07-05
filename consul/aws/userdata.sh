@@ -36,4 +36,4 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
-/opt/$NAME/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/$NAME/tls/ca.crt.pem" --cert-file-path "/opt/$NAME/tls/$NAME.crt.pem" --key-file-path "/opt/$NAME/tls/$NAME.key.pem"
+/opt/$NAME/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.crt.pem" --cert-file-path "/opt/consul/tls/$NAME.crt.pem" --key-file-path "/opt/consul/tls/$NAME.key.pem"
