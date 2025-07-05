@@ -26,6 +26,7 @@ sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
 sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/consul/tls/certscript.sh
 #Set up Vault Agent
 sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
+sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
 
 # Import Gossip Encryption Key
