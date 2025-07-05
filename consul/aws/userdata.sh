@@ -13,16 +13,16 @@ echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/co
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 
 # Remove ACL configuration
-rm -f /opt/$NAME/config/acl.json
-rm -f /opt/$NAME/config/tls.json
+rm -f /opt/consul/config/acl.json
+rm -f /opt/consul/config/tls.json
 
 
 #Set Up Certscript 
-sed -ie "s/ROLE/${ROLE}/g" /opt/vault/certscript.sh
-sed -ie "s/NAME/${NAME}/g" /opt/vault/certscript.sh
-
+sed -ie "s/ROLE/${ROLE}/g" /opt/consul/tls/certscript.sh
+sed -ie "s/NAME/${NAME}/g" /opt/consul/tls/certscript.sh
+sed -ie "s/vault_address/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
 #Set up Vault Agent
-sed -ie "s/VAULT_ADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
+sed -ie "s/vault_address/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
 
 
 # Import Gossip Encryption Key
