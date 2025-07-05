@@ -21,7 +21,7 @@ rm -f /opt/consul/config/tls.json
 
 #Set Up Certscript 
 sed -ie "s/ROLE/${ROLE}/g" /opt/consul/tls/certscript.sh
-sed -ie "s/NAME/${NAME}/g" /opt/consul/tls/certscript.sh
+sed -ie "s/APPNAME/${NAME}/g" /opt/consul/tls/certscript.sh
 sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
 #Set up Vault Agent
 sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
@@ -38,4 +38,4 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
-/opt/$NAME/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.crt.pem" --cert-file-path "/opt/consul/tls/${NAME}.crt.pem" --key-file-path "/opt/consul/tls/${NAME}.key.pem"
+/opt/consul/config/bin/run-consul --server --cluster-tag-key "${CLUSTER_TAG_KEY}" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.crt.pem" --cert-file-path "/opt/consul/tls/${NAME}.crt.pem" --key-file-path "/opt/consul/tls/${NAME}.key.pem"
