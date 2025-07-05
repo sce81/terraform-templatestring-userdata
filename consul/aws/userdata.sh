@@ -7,11 +7,6 @@ CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates -
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
 CONSUL_GOSSIP=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
-
-echo $CONSUL_CERTS | sed -e 's/\\n/\n/g' > /opt/consul/tls/bundle.crt
-echo $CONSUL_CERTS | jq -r '.cert_bundle.ca' | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.crt.pem
-echo $CONSUL_CERTS | jq -r '.cert_bundle.private' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.key.pem
-echo $CONSUL_CERTS | jq -r '.cert_bundle.public' | sed -e 's/\\n/\n/g' > /opt/consul/tls/consul.crt.pem
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 
 # Remove ACL configuration
@@ -28,12 +23,14 @@ sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/consul/tls/certscript.sh
 sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
 sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
+# execute certscript
+/opt/consul/tls/certscript.sh
 
 # Import Gossip Encryption Key
 GOSSIP_ENCRYPTION_KEY=$CONSUL_GOSSIP
 
 # Import Trust
-sudo /tmp/update-certificate-store --cert-file-path /opt/consul/config/tls/ca.crt.pem 
+sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/certificate.json
 
 # Import License
 echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
