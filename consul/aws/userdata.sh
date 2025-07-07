@@ -8,6 +8,7 @@ CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --wi
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
+export CONSUL_LICENSE_PATH=/opt/consul/config/license.hclic
 
 # Remove ACL configuration
 rm -f /opt/consul/config/acl.json
@@ -28,11 +29,11 @@ sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
 
 # Import Trust
-sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/certificate.json
+sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/certificate.json
 
 # Import License
 echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
 
 # Startup
 
-/opt/consul/bin/run-consul --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.internal.key"
+/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
