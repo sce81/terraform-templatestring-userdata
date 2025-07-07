@@ -2,6 +2,7 @@
 PATH=$PATH:/usr/local/bin
 NAME=${NAME}
 ROLE=${ROLE}
+DATACENTER=${CLUSTER_TAG_VALUE}
 
 CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
@@ -36,4 +37,4 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
-/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
+/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter=$DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
