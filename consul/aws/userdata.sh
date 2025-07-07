@@ -16,13 +16,13 @@ rm -f /opt/consul/config/tls.json
 
 
 #Set Up Certscript 
-sed -ie "s/ROLE/${ROLE}/g" /opt/consul/tls/certscript.sh
-sed -ie "s/APPNAME/${NAME}/g" /opt/consul/tls/certscript.sh
-sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
-sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/consul/tls/certscript.sh
+sed -i "s/ROLE/${ROLE}/g" /opt/consul/tls/certscript.sh
+sed -i "s/APPNAME/${NAME}/g" /opt/consul/tls/certscript.sh
+sed -i "s/VAULTADDR/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
+sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/consul/tls/certscript.sh
 #Set up Vault Agent
-sed -ie "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
-sed -ie "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
+sed -i "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
+sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
 # execute certscript
 /opt/consul/tls/certscript.sh
