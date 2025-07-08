@@ -10,7 +10,7 @@ CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --wi
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
 
-echo $CONSUL_CERT > /opt/consul/tls/client-bundle.pem
+echo $CONSUL_CERT | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-bundle.pem
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 export CONSUL_LICENSE_PATH=/opt/consul/config/license.hclic
 
