@@ -37,4 +37,4 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
-/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter=$DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
+/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
