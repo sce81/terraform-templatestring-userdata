@@ -5,12 +5,16 @@ ROLE=${ROLE}
 CLUSTER_TAG_VALUE=${CLUSTER_TAG_VALUE}
 DATACENTER=${DATACENTER}
 
-CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/client-certificates --with-decryption | jq '.Parameter.Value')
+CONSUL_CA=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/ca.pem --with-decryption | jq '.Parameter.Value')
+CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-cert --with-decryption | jq '.Parameter.Value')
+CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-key.pem --with-decryption | jq '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
 
-echo $CONSUL_CERT | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-bundle.pem
+echo $CONSUL_CA | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.pem
+echo $CONSUL_CERT | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-cert.pem
+echo $CONSUL_KEY | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-key.pem
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 export CONSUL_LICENSE_PATH=/opt/consul/config/license.hclic
 
@@ -20,5 +24,5 @@ rm -f /opt/consul/config/tls.json
 
 # Startup
 
-/opt/consul/bin/run-consul.sh --client --cluster-tag-key "Name" --cluster-tag-value $CLUSTER_TAG_VALUE --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/client-bundle.pem" --cert-file-path "/opt/consul/tls/client-bundle.pem" --key-file-path "/opt/consul/tls/client-bundle.pem"
+/opt/consul/bin/run-consul.sh --client --cluster-tag-key "Name" --cluster-tag-value $CLUSTER_TAG_VALUE --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.pem" --cert-file-path "/opt/consul/tls/client-cert.pem" --key-file-path "/opt/consul/tls/client-key.pem"
 
