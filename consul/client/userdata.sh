@@ -5,9 +5,9 @@ ROLE=${ROLE}
 CLUSTER_TAG_VALUE=${CLUSTER_TAG_VALUE}
 DATACENTER=${DATACENTER}
 
-CONSUL_CA=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/ca.pem --with-decryption | jq '.Parameter.Value')
-CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-cert --with-decryption | jq '.Parameter.Value')
-CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-key.pem --with-decryption | jq '.Parameter.Value')
+CONSUL_CA=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/ca.pem --with-decryption | jq -r '.Parameter.Value')
+CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-cert --with-decryption | jq -r '.Parameter.Value')
+CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/client-key.pem --with-decryption | jq -r '.Parameter.Value')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
