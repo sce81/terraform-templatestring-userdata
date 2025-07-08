@@ -16,7 +16,6 @@ echo $CONSUL_CA | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.pem
 echo $CONSUL_CERT | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-cert.pem
 echo $CONSUL_KEY | sed -e 's/\\n/\n/g' > /opt/consul/tls/client-key.pem
 echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
-export CONSUL_LICENSE_PATH=/opt/consul/config/license.hclic
 
 # Remove ACL configuration
 rm -f /opt/consul/config/acl.json
@@ -24,6 +23,8 @@ rm -f /opt/consul/config/tls.json
 
 # Startup
 
+# Import License
+echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
 sudo chown -R consul:consul /opt/consul
 sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/client-cert.pem
 
