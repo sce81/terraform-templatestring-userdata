@@ -21,3 +21,4 @@ rm -f /opt/consul/config/tls.json
 # Startup
 
 /opt/consul/bin/run-consul.sh --client --cluster-tag-key "Name" --cluster-tag-value $CLUSTER_TAG_VALUE --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/client-bundle.pem" --cert-file-path "/opt/consul/tls/client-bundle.pem" --key-file-path "/opt/consul/tls/client-bundle.pem"
+
