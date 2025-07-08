@@ -2,6 +2,7 @@
 PATH=$PATH:/usr/local/bin
 NAME=${NAME}
 ROLE=${ROLE}
+CLUSTER_TAG_VALUE=${CLUSTER_TAG_VALUE}
 DATACENTER=${DATACENTER}
 
 CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/client-certificates --with-decryption | jq '.Parameter.Value')
