@@ -24,6 +24,7 @@ rm -f /opt/consul/config/tls.json
 
 # Startup
 
+sudo chown -R consul:consul /opt/consul
 sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/client-cert.pem
 
 /opt/consul/bin/run-consul.sh --client --cluster-tag-key "Name" --cluster-tag-value $CLUSTER_TAG_VALUE --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.pem" --cert-file-path "/opt/consul/tls/client-cert.pem" --key-file-path "/opt/consul/tls/client-key.pem"
