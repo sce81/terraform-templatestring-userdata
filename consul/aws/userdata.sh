@@ -6,7 +6,7 @@ DATACENTER=${CLUSTER_TAG_VALUE}
 
 CONSUL_CA=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/ca.pem --with-decryption | jq '.Parameter.Value' | tr -d '"')
 CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/server-cert --with-decryption | jq '.Parameter.Value' | tr -d '"')
-CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/server-key.pem --with-decryption | jq '.Parameter.Value' | tr -d '"')
+CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/server-key --with-decryption | jq '.Parameter.Value' | tr -d '"')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
@@ -27,7 +27,7 @@ sed -i "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
 sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
 # execute certscript
-/opt/consul/tls/certscript.sh
+#/opt/consul/tls/certscript.sh
 
 
 # Import Trust
