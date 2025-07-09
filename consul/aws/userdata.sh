@@ -4,7 +4,9 @@ NAME=${NAME}
 ROLE=${ROLE}
 DATACENTER=${CLUSTER_TAG_VALUE}
 
-CONSUL_CERTS=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates --with-decryption | jq '.Parameter.Value')
+CONSUL_CA=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/ca.pem --with-decryption | jq '.Parameter.Value' | tr -d '"')
+CONSUL_CERT=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/server-cert --with-decryption | jq '.Parameter.Value' | tr -d '"')
+CONSUL_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/certificates/server-key.pem --with-decryption | jq '.Parameter.Value' | tr -d '"')
 CONSUL_LICENSE=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/license --with-decryption | jq -r '.Parameter.Value')
 GOSSIP_ENCRYPTION_KEY=$(aws ssm get-parameter --name /${CLUSTER_TAG_VALUE}/gossip-key --with-decryption | jq -r '.Parameter.Value')
 
@@ -17,10 +19,9 @@ rm -f /opt/consul/config/tls.json
 
 
 #Set Up Certscript 
-sed -i "s/ROLE/${ROLE}/g" /opt/consul/tls/certscript.sh
-sed -i "s/APPNAME/${NAME}/g" /opt/consul/tls/certscript.sh
-sed -i "s/VAULTADDR/${VAULT_ADDR}/g" /opt/consul/tls/certscript.sh
-sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/consul/tls/certscript.sh
+echo $CONSUL_CA | sed -e 's/\\n/\n/g' > /opt/consul/tls/ca.pem
+echo $CONSUL_CERT | sed -e 's/\\n/\n/g' > /opt/consul/tls/server-cert.pem
+echo $CONSUL_KEY | sed -e 's/\\n/\n/g' > /opt/consul/tls/server-key.pem
 #Set up Vault Agent
 sed -i "s/VAULTADDR/${VAULT_ADDR}/g" /opt/vault/agent-config.hcl
 sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
@@ -30,11 +31,11 @@ sed -i "s/VAULTNAMESPACE/${VAULT_NAMESPACE}/g" /opt/vault/agent-config.hcl
 
 
 # Import Trust
-sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/certificate.json
+sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/server-cert.pem
 
 # Import License
 echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
 
 # Startup
 
-/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/${NAME}.demo.internal.crt" --cert-file-path "/opt/consul/tls/${NAME}.demo.internal.crt" --key-file-path "/opt/consul/tls/${NAME}.demo.internal.key"
+/opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.pem" --cert-file-path "/opt/consul/tls/server-cert.pem" --key-file-path "/opt/consul/tls/server-key.pem"
