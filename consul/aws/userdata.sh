@@ -14,7 +14,7 @@ echo $CONSUL_LICENSE > /opt/consul/config/license.hclic
 export CONSUL_LICENSE_PATH=/opt/consul/config/license.hclic
 
 # Remove ACL configuration
-rm -f /opt/consul/config/acl.json
+#rm -f /opt/consul/config/acl.json
 rm -f /opt/consul/config/tls.json
 
 
