@@ -38,4 +38,12 @@ echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config
 
 # Startup
 
+echo """
+acl {
+  enabled = true
+  default_policy = "allow"
+  enable_token_persistence = true
+}
+""" >> /opt/consul/config/default.hcl
+
 /opt/consul/bin/run-consul.sh --server --cluster-tag-key "Name" --cluster-tag-value "${CLUSTER_TAG_VALUE}" --datacenter $DATACENTER --enable-gossip-encryption --gossip-encryption-key "$GOSSIP_ENCRYPTION_KEY" --enable-rpc-encryption --ca-path "/opt/consul/tls/ca.pem" --cert-file-path "/opt/consul/tls/server-cert.pem" --key-file-path "/opt/consul/tls/server-key.pem"

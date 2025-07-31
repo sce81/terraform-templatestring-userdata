@@ -26,13 +26,6 @@ rm -f /opt/consul/config/tls.json
 
 # Import License
 echo "license_path = \"/opt/consul/config/license.hclic\"" >> /opt/consul/config/default.hcl
-echo """
-acl {
-  enabled = true
-  default_policy = "allow"
-  enable_token_persistence = true
-}
-""" >> /opt/consul/config/default.hcl
 sudo chown -R consul:consul /opt/consul
 sudo bash /opt/consul/tls/update-certificate-store.sh --cert-file-path /opt/consul/tls/client-cert.pem
 
